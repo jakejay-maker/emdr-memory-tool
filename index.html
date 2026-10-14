@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Calm Scenes</title>
+<style>
+:root{--bg:#fff7ec;--ink:#27406b;--soft:#5d7196;--sky:#cdebff;--mint:#cdf1dc;--peach:#ffdcc0;--sun:#ffd76a;--accent:#4f8cf0;--warn:#ffe9e0;--r:20px}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font-family:ui-rounded,"SF Pro Rounded","Nunito","Avenir Next",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);line-height:1.5;min-height:100vh;
+  background:radial-gradient(900px 500px at 10% -10%,var(--sky),transparent 60%),radial-gradient(800px 500px at 100% 0,var(--peach),transparent 55%),var(--bg)}
+a{color:var(--accent);font-weight:700}
+.top{position:sticky;top:0;z-index:7;display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,247,236,.94);backdrop-filter:blur(6px);border-bottom:3px solid var(--ink)}
+.brand{font-weight:900;font-size:1.1rem;flex:1;white-space:nowrap}
+.brand::before{content:"☁️ "}
+.btn{display:inline-block;font:inherit;font-weight:800;padding:6px 12px;font-size:.82rem;white-space:nowrap;border:3px solid var(--ink);border-radius:999px;background:var(--sun);color:var(--ink);box-shadow:0 4px 0 var(--ink);cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.alt{background:var(--sky)}.btn.ghost{background:#fff}
+.narrow{display:none}
+.stars{font-weight:900;border:3px solid var(--ink);border-radius:999px;padding:2px 10px;background:#fff;font-size:.85rem;white-space:nowrap}
+
+/* pinned scene */
+#pin-wrap{position:sticky;top:57px;z-index:5;background:var(--bg);border-bottom:3px solid var(--ink)}
+#pin{max-width:760px;margin:0 auto;padding:10px 16px 8px}
+.stage{position:relative;aspect-ratio:3/2;max-height:36vh;width:100%;border:3px solid var(--ink);border-radius:var(--r);box-shadow:0 5px 0 var(--ink);overflow:hidden;background:linear-gradient(var(--sky),var(--mint))}
+.stage img{position:absolute;user-select:none;-webkit-user-drag:none;pointer-events:none}
+#bg{inset:0;width:100%;height:100%;object-fit:cover}
+#fig{left:5%;bottom:4%;height:46%}
+#tgt{right:12%;height:30%;bottom:30%;display:none}
+#chest{right:6%;bottom:5%;height:24%;display:none}
+.cap{position:absolute;left:10px;right:10px;top:10px;background:rgba(255,255,255,.93);border:2.5px solid var(--ink);border-radius:16px;padding:6px 12px;font-weight:700;font-size:.9rem}
+.cloud{position:absolute;height:26px;width:90px;border-radius:999px;background:#fff;opacity:.55;animation:drift 40s linear infinite}
+.cloud.c1{top:36%}.cloud.c2{top:46%;animation-duration:58s;animation-delay:-22s;transform:scale(.7)}
+@keyframes drift{from{left:-110px}to{left:110%}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
+#fig,#tgt{animation:bob 3.4s ease-in-out infinite}#tgt{animation-delay:-1.2s}
+.tag{position:absolute;right:6%;display:none;gap:6px;align-items:center;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:1px 10px;font-weight:800;font-size:.8rem;max-width:62%}
+.tag .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.lane{position:absolute;left:0;right:0;top:58%;height:0;display:none}
+.run .lane{display:block}
+#ball{position:absolute;top:-22px;width:44px;height:44px;margin-left:-22px;border-radius:50%;border:3px solid var(--ink);background:radial-gradient(circle at 35% 30%,#fff,var(--sun) 40%,#ff9f43)}
+.dot{position:absolute;top:-16px;width:32px;height:32px;margin-left:-16px;border-radius:50%;border:3px solid var(--ink);background:var(--sun);opacity:.25;display:none}
+.rm #ball,.rm .cloud{display:none}.rm .dot{display:block}.rm #fig,.rm #tgt{animation:none}
+.bar{position:absolute;left:0;bottom:0;height:7px;width:0;background:var(--accent)}
+.ctl{display:flex;gap:10px;justify-content:center;padding:8px 0 0}
+
+/* chat */
+.log{max-width:760px;margin:0 auto;padding:12px 16px 170px}
+.msg{display:flex;margin:10px 0}.msg.me{justify-content:flex-end}
+.bub{max-width:90%;border:3px solid var(--ink);border-radius:20px;padding:8px 14px;background:#fff;box-shadow:0 4px 0 var(--ink)}
+.me .bub{background:var(--sun)}
+.bub p{margin:.35em 0}
+.bub.dots{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.chip{font:inherit;font-weight:800;border:3px solid var(--ink);border-radius:999px;padding:8px 16px;background:var(--sky);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+.chip.on{background:var(--sun)}.chip:disabled{opacity:.55;cursor:default;box-shadow:none}
+.scale{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px;margin:10px 0 2px}
+.scale button{min-width:0;aspect-ratio:1;border:2.5px solid var(--ink);border-radius:12px;background:#fff;font:inherit;font-weight:900;color:var(--ink);cursor:pointer;padding:0}
+.scale button.on{background:var(--sun)}.scale button:disabled{opacity:.6;cursor:default}
+.ends{display:flex;justify-content:space-between;font-size:.8rem;color:var(--soft);font-weight:700}
+.res{list-style:none;padding:0;margin:10px 0}
+.res li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 12px;border:3px solid var(--ink);border-radius:16px;margin:8px 0;background:#fff}
+.res select{width:100%;font:inherit;padding:8px 10px;border:3px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink)}
+.chap{padding:6px 12px;border:3px solid var(--ink);border-radius:16px;margin:8px 0;background:var(--sky)}
+
+/* input bar */
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:rgba(255,247,236,.96);backdrop-filter:blur(6px);border-top:3px solid var(--ink);padding:10px 16px calc(8px + env(safe-area-inset-bottom))}
+#bar .in{max-width:760px;margin:0 auto;display:flex;gap:8px}
+#box{flex:1;min-width:0;font:inherit;padding:11px 16px;border:3px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink)}
+#box:disabled{background:#f1ece2}
+#sendBtn{width:48px;height:48px;border-radius:50%;padding:0;font-size:1.25rem}
+.fine{max-width:760px;margin:6px auto 0;font-size:.75rem;text-align:center;color:var(--soft)}
+
+dialog{border:3px solid var(--ink);border-radius:var(--r);box-shadow:0 6px 0 var(--ink);max-width:520px;width:calc(100% - 32px);color:var(--ink);background:#fff}
+dialog::backdrop{background:rgba(39,64,107,.45)}
+.cf{position:fixed;top:-40px;font-size:1.6rem;animation:fall 3.4s ease-in forwards;pointer-events:none;z-index:50}
+@keyframes fall{to{transform:translateY(112vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.cloud,#fig,#tgt,.bub.dots{animation:none}}
+@media (max-width:560px){.scale{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.stage{aspect-ratio:2/1}}
+@media (max-width:480px){.brand::before{content:none}.wide{display:none}.narrow{display:inline}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Calm Scenes</div>
+  <span id="stars" class="stars" hidden>⭐ 0</span>
+  <button id="pause" class="btn alt" aria-label="Stop and ground" hidden><span class="wide">Stop &amp; ground</span><span class="narrow">Stop</span></button>
+  <button id="help" class="btn" aria-label="Need help now"><span class="wide">Need help now</span><span class="narrow">Help</span></button>
+</header>
+
+<div id="pin-wrap" hidden><div id="pin">
+  <div id="stage" class="stage" aria-label="Your calm scene">
+    <img id="bg" alt=""><div class="cloud c1"></div><div class="cloud c2"></div><img id="fig" alt=""><img id="tgt" alt=""><img id="chest" alt=""><div class="tag" id="tag"></div>
+    <div class="cap" id="cap" aria-live="polite" hidden></div>
+    <div class="lane"><div id="ball"></div><div class="dot" id="dotL" style="left:8%"></div><div class="dot" id="dotR" style="left:92%"></div></div>
+    <div class="bar" id="barP"></div>
+  </div>
+  <div class="ctl" id="ctl" hidden><button id="back" class="btn alt">⬅ Step back</button><button id="near" class="btn ghost">Come closer ➡</button></div>
+</div></div>
+
+<main id="log" class="log" aria-live="polite"></main>
+
+<form id="bar" autocomplete="off">
+  <div class="in"><input id="box" type="text" aria-label="Your message" disabled placeholder="…"><button id="sendBtn" class="btn" aria-label="Send">↑</button></div>
+  <div class="fine">Not therapy. Not for emergencies. <a href="#" id="help2">Need help now</a></div>
+</form>
+
+<dialog id="helpDlg">
+  <h2 style="margin-top:0">Need help now?</h2>
+  <p>You're not alone. If you might be in danger, call your local emergency number.</p>
+  <ul class="res" data-res></ul>
+  <button class="btn" id="helpClose" type="button">Close</button>
+</dialog>
+
+<script src="session.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const T = window.__T || {};                 // test hooks only
+const SETMS = T.setMs || 24000;
+const RM = () => document.body.classList.contains('rm') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- crisis resources ----------
+const RES = {
+  MX: ['México', [['Línea de la Vida (24 h, gratuita)', '800 911 2000', 'tel:8009112000'], ['Emergencias', '911', 'tel:911'], ['SAPTEL (crisis emocional)', 'saptel.org.mx', 'https://saptel.org.mx']]],
+  US: ['United States', [['988 Suicide & Crisis Lifeline', '988', 'tel:988'], ['Emergency', '911', 'tel:911']]],
+  UK: ['United Kingdom', [['Samaritans', '116 123', 'tel:116123'], ['Emergency', '999', 'tel:999']]],
+  ES: ['España', [['Línea 024', '024', 'tel:024'], ['Emergencias', '112', 'tel:112']]],
+  XX: ['Elsewhere', [['Find a helpline in your country', 'findahelpline.com', 'https://findahelpline.com']]]
+};
+const TZ = (Intl.DateTimeFormat().resolvedOptions().timeZone || '');   // time zone is a better guide than language
+let cc = /^America\/(Mexico_City|Tijuana|Monterrey|Merida|Chihuahua|Cancun|Hermosillo|Mazatlan|Matamoros|Ojinaga|Bahia_Banderas)$/.test(TZ) ? 'MX'
+  : TZ === 'Europe/London' ? 'UK' : /^(Europe\/Madrid|Atlantic\/Canary)$/.test(TZ) ? 'ES'
+  : /^(America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Indiana\/.*|Kentucky\/.*)|Pacific\/Honolulu)$/.test(TZ) ? 'US' : 'XX';
+function renderRes() {
+  $$('[data-res]').forEach(ul => {
+    ul.innerHTML = '';
+    const sel = document.createElement('li'); sel.style.cssText = 'border:0;padding:0;box-shadow:none;background:none';
+    const s = document.createElement('select'); s.setAttribute('aria-label', 'Country');
+    Object.keys(RES).forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = RES[k][0]; if (k === cc) o.selected = true; s.appendChild(o); });
+    s.onchange = () => { cc = s.value; renderRes(); };
+    sel.appendChild(s); ul.appendChild(sel);
+    RES[cc][1].forEach(([n, num, href]) => {
+      const li = document.createElement('li'), l = document.createElement('span'), a = document.createElement('a');
+      l.textContent = n; a.href = href; a.textContent = num; a.style.cssText = 'font-size:1.1rem;white-space:nowrap';
+      li.appendChild(l); li.appendChild(a); ul.appendChild(li);
+    });
+  });
+}
+renderRes();
+
+// ---------- network ----------
+let token = sessionStorage.getItem('sm_tok') || '';
+async function api(path, body) {
+  const h = { 'Content-Type': 'application/json' }; if (token) h['X-Session-Token'] = token;
+  const r = await fetch(path, { method: 'POST', headers: h, body: JSON.stringify(body || {}) });
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok) { const e = new Error((j && j.error) || ('http ' + r.status)); e.status = r.status; throw e; }
+  return j;
+}
+const story = (system, input) => api('proxy.php', { mode: 'story', system, input: JSON.stringify(input) });
+const image = async (prompt, size, transparent) => 'data:image/png;base64,' + (await api('proxy.php', { mode: 'image', prompt, size, transparent: !!transparent })).b64;
+const setToken = t => { token = t; sessionStorage.setItem('sm_tok', t); };
+
+// Text risk = max(local lexicon, server classifier). If the check can't run, callers must NOT continue.
+async function riskCheck(text) {
+  if (!text || !text.trim()) return 'green';
+  const local = Session.textRisk(text); let srv = null;
+  for (let i = 0; i < 2 && srv === null; i++) { try { srv = (await api('proxy.php', { mode: 'risk', text })).level; } catch (e) {} }
+  if (srv === null) return local === 'green' ? 'unavailable' : local;
+  return Session.maxLevel(local, srv);
+}
+
+// ---------- fallback art (used whenever generation fails) ----------
+const svg = s => 'data:image/svg+xml;utf8,' + encodeURIComponent(s);
+const FB_BG = svg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdebff"/><stop offset="1" stop-color="#fff2d6"/></linearGradient></defs><rect width="300" height="200" fill="url(#g)"/><circle cx="235" cy="48" r="26" fill="#ffd76a" stroke="#27406b" stroke-width="3"/><path d="M0 150 Q80 105 170 145 T300 135 V200 H0Z" fill="#bfe8c9" stroke="#27406b" stroke-width="3"/><path d="M0 175 Q100 140 210 172 T300 165 V200 H0Z" fill="#a6dcb5" stroke="#27406b" stroke-width="3"/></svg>');
+const FB_FIG = svg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><ellipse cx="50" cy="58" rx="36" ry="34" fill="#ffdcc0" stroke="#27406b" stroke-width="4"/><circle cx="38" cy="52" r="4.5" fill="#27406b"/><circle cx="62" cy="52" r="4.5" fill="#27406b"/><path d="M38 68 Q50 78 62 68" fill="none" stroke="#27406b" stroke-width="4" stroke-linecap="round"/></svg>');
+const FB_TGT = svg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 70 Q10 40 38 36 Q46 14 70 26 Q94 28 86 56 Q90 76 64 74 Z" fill="#d8d3f0" stroke="#27406b" stroke-width="4"/><circle cx="46" cy="50" r="6" fill="#fff" stroke="#27406b" stroke-width="3"/><circle cx="66" cy="50" r="6" fill="#fff" stroke="#27406b" stroke-width="3"/><circle cx="47" cy="51" r="2.5" fill="#27406b"/><circle cx="65" cy="51" r="2.5" fill="#27406b"/></svg>');
+const FB_CHEST = svg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><rect x="8" y="30" width="84" height="44" rx="8" fill="#e8b27a" stroke="#27406b" stroke-width="4"/><path d="M8 38 Q8 12 50 12 Q92 12 92 38Z" fill="#f3c897" stroke="#27406b" stroke-width="4"/><rect x="42" y="38" width="16" height="18" rx="4" fill="#ffd76a" stroke="#27406b" stroke-width="3"/></svg>');
+const FALLBACK_LINES = ['The scene stays gentle and steady. You are safe here, and you can notice whatever comes.', 'Everything in the picture moves slowly, at its own pace. You are here, breathing.', 'Whatever you notice can drift past like a cloud. You are in your safe place.'];
+const FALLBACK_TITLES = ['A quiet moment', 'Clouds drift by', 'Breathing room'];
+
+// ---------- session wiring (all safety decisions live in session.js) ----------
+const ui = { scene: false, sound: false, soundAsked: false, introduced: false, hero: 'you', belief: '', body: '', neg: '', headline: '', impact: null, voc0: null, voc1: null,
+  symbol: '', cname: '', mood: null, stars: 0, chapters: [], distance: 1, creatureP: null, net: false };
+let S = Session.create({ cooldownUntil: +localStorage.getItem('sm_cd') || 0, cfg: T.cfg });
+let timer = 0, epoch = 0, expect = null;
+
+function syncTimer() {
+  clearTimeout(timer); timer = 0;
+  if (S.awaiting && S.deadline) timer = setTimeout(() => send({ type: 'CHECKIN_TIMEOUT' }), Math.max(0, S.deadline - Date.now()) + 50);
+}
+function send(ev) {
+  const r = Session.dispatch(S, ev, Date.now());
+  S = r.state; syncTimer(); track(ev);
+  r.fx.forEach(handle);
+  $('#pause').hidden = !['stabilize', 'target', 'processing', 'orienting'].includes(S.state);
+}
+function handle(f) {
+  if (f === 'bls_stop') return stopBLS();
+  if (f === 'lock') return void api('proxy.php', { mode: 'lock' }).catch(() => {});
+  if (f === 'set_cooldown') return localStorage.setItem('sm_cd', String(S.cooldownUntil));
+  if (f === 'refund') return doRefund();
+  if (f === 'show:safety_net') return safetyNet();
+  if (f.startsWith('show:')) { bump(); return show(f.slice(5)); }
+}
+async function doRefund() { if (!token) return; try { await api('pay.php?a=refund', { reason: S.outcome === 'excluded' ? 'screen' : 'not_ready' }); } catch (e) {} }
+
+// ---------- chat primitives ----------
+const log = $('#log'), box = $('#box');
+const scrollEnd = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: RM() ? 'auto' : 'smooth' });
+function bubble(who) { const w = document.createElement('div'); w.className = 'msg ' + who; const b = document.createElement('div'); b.className = 'bub'; w.appendChild(b); log.appendChild(w); return b; }
+function say(text, who) {
+  const b = bubble(who || 'bot');
+  (Array.isArray(text) ? text : [text]).forEach(t => { const p = document.createElement('p'); p.textContent = t; b.appendChild(p); });
+  scrollEnd(); return b;
+}
+function thinking() { const b = bubble('bot'); b.textContent = '…'; b.classList.add('dots'); scrollEnd(); return () => b.parentElement && b.parentElement.remove(); }
+function bump() {          // a new step begins: everything still tappable from the old step goes dead
+  epoch++; expect = null;
+  $$('.live').forEach(e => { e.disabled = true; e.classList.remove('live'); });
+  syncBox();
+}
+function syncBox() {
+  const on = !!(expect && expect.ep === epoch && expect.kind !== 'pair');
+  box.disabled = !on; box.type = on && expect.secret ? 'password' : 'text'; box.maxLength = on ? (expect.max || 200) : 200;
+  box.placeholder = on ? (expect.placeholder || 'Type here…') : 'Tap an option above';
+  if (on && expect.kind === 'text') box.focus();
+}
+function chipRow(opts, onPick) {
+  const row = document.createElement('div'); row.className = 'chips';
+  opts.forEach(o => {
+    const [label, val] = Array.isArray(o) ? o : [o, o];
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip live'; b.textContent = label; b.onclick = () => onPick(label, val, b); row.appendChild(b);
+  });
+  log.appendChild(row); scrollEnd(); return row;
+}
+const finish = (row, b) => { row.querySelectorAll('button').forEach(x => { x.disabled = true; x.classList.remove('live'); }); if (b) b.classList.add('on'); };
+function chips(opts) {
+  const ep = epoch;
+  return new Promise(res => { const row = chipRow(opts, (label, val, b) => { if (ep !== epoch) return; finish(row, b); say(label, 'me'); res(val); }); });
+}
+function askText(prompt, o = {}) {
+  const ep = epoch; if (prompt) say(prompt);
+  return new Promise(res => {
+    let row = null, done = false;
+    const answer = (val, label) => { if (done || ep !== epoch) return; done = true; if (row) finish(row); say(o.secret ? '••••••' : label, 'me'); expect = null; syncBox(); res(val); };
+    if (o.chips) row = chipRow(o.chips, (label, val) => answer(val, label));
+    expect = { kind: 'text', ep, max: o.max, secret: o.secret, placeholder: o.placeholder, answer: v => answer(v, v) }; syncBox();
+  });
+}
+function scaleRow(parent, min, max, hints, onPick) {
+  const el = document.createElement('div'); el.className = 'scale'; const n = max - min + 1; if (n <= 7) el.style.gridTemplateColumns = 'repeat(' + n + ',minmax(0,1fr))';
+  for (let i = min; i <= max; i++) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'live'; b.textContent = i; b.setAttribute('aria-label', String(i));
+    b.onclick = () => { if (b.disabled) return; el.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on'); onPick(i, el); }; el.appendChild(b);
+  }
+  parent.appendChild(el);
+  if (hints) { const e = document.createElement('div'); e.className = 'ends'; hints.forEach(h => { const s = document.createElement('span'); s.textContent = h; e.appendChild(s); }); parent.appendChild(e); }
+  return el;
+}
+const lock = el => el.querySelectorAll('button').forEach(x => { x.disabled = true; x.classList.remove('live'); });
+function rate(prompt, o = {}) {      // one rating: tap a number, or type it
+  const ep = epoch, min = o.min == null ? 0 : o.min, max = o.max == null ? 10 : o.max, b = say(prompt);
+  return new Promise(res => {
+    let done = false;
+    const answer = n => { if (done || ep !== epoch) return; done = true; lock(el); say(String(n), 'me'); expect = null; syncBox(); res(n); };
+    const el = scaleRow(b, min, max, o.hints, n => answer(n));
+    expect = { kind: 'rating', ep, min, max, placeholder: 'Tap a number, or type it', answer };
+    syncBox();
+  });
+}
+function ratePair(a, ha, b, hb) {     // two ratings in one bubble; resolves [x, y, ms] when both are chosen
+  const ep = epoch, t0 = performance.now(), bub = say(a);
+  return new Promise(res => {
+    let x = null, y = null, done = false;
+    const go = () => { if (x === null || y === null || done) return; done = true; setTimeout(() => { if (ep !== epoch) return; lock(ea); lock(eb); expect = null; syncBox(); res([x, y, Math.round(performance.now() - t0)]); }, 250); };
+    const ea = scaleRow(bub, 0, 10, ha, v => { x = v; go(); });
+    const p = document.createElement('p'); p.textContent = b; bub.appendChild(p);
+    const eb = scaleRow(bub, 0, 10, hb, v => { y = v; go(); });
+    expect = { kind: 'pair', ep }; syncBox();
+  });
+}
+function resBubble(intro) { const b = say(intro); const ul = document.createElement('ul'); ul.className = 'res'; ul.setAttribute('data-res', ''); b.appendChild(ul); renderRes(); }
+
+$('#bar').onsubmit = e => {
+  e.preventDefault(); const v = box.value.trim(); if (!v || !expect || expect.ep !== epoch) return;
+  if (expect.kind === 'rating') {
+    const n = parseInt(v, 10);
+    if (String(n) !== v || n < expect.min || n > expect.max) { say('Please tap or type a number from ' + expect.min + ' to ' + expect.max + '.'); box.value = ''; return; }
+    box.value = ''; return expect.answer(n);
+  }
+  box.value = ''; expect.answer(v);
+};
+
+// ---------- scene ----------
+const HINT_SUD = ['0 calm', '10 worst'], HINT_PRES = ['0 not at all', '10 fully here'];
+const setCap = t => { $('#cap').textContent = t; $('#cap').hidden = !t; };
+function showScene(on) { ui.scene = on; $('#pin-wrap').hidden = !on; }
+function fallbackScene() { $('#bg').src = FB_BG; $('#fig').src = FB_FIG; showScene(true); }
+
+// ---------- creature: small and far by default; the person moves it. Its face mirrors the latest rating (no rewards for low numbers). ----------
+const MOOD = s => s == null ? '' : s <= 1 ? '😌' : s <= 3 ? '🙂' : s <= 6 ? '😐' : s <= 8 ? '😟' : '😣';
+function layoutTarget() {
+  if (!ui.symbol) return;
+  const el = $('#tgt'), d = ui.distance, h = [18, 24, 31, 38, 46][d - 1], b = [44, 38, 32, 26, 20][d - 1], t = $('#tag');
+  el.style.transition = RM() ? 'none' : 'height .8s ease, bottom .8s ease'; el.style.height = h + '%'; el.style.bottom = b + '%';
+  t.style.display = 'flex'; t.style.bottom = Math.max(2, b - 9) + '%'; t.textContent = '';
+  const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = ui.cname; const md = document.createElement('span'); md.textContent = MOOD(ui.mood); t.appendChild(nm); t.appendChild(md);
+}
+const CREATURE_SYS = 'You turn a short phrase about something that bothers someone into a SYMBOLIC, harmless cartoon creature for a gentle guided exercise. Reply in the same language as the input. Never depict or describe the event, people, injuries or anything frightening. The creature must look silly and harmless (big googly eyes, soft colours), such as a storm cloud, a locked door, a heavy rock, a shadow, a tangled web or a wave, chosen to match the feeling and never the event. Return JSON: {"name": string (a funny name, max 3 words), "form": string (what it is, max 6 words), "sprite_prompt": string (a cartoon image description, side view, simple shapes, no text)}.';
+async function makeCreature(headline, body) {
+  let c = { name: 'Grumbles', form: 'storm cloud', sprite: 'a grumpy little storm cloud' };
+  try { const r = await story(CREATURE_SYS, { headline, body }); if (r && r.name) c = { name: String(r.name).slice(0, 30), form: String(r.form || c.form).slice(0, 40), sprite: String(r.sprite_prompt || c.sprite) }; } catch (e) {}
+  ui.cname = c.name; ui.symbol = c.form;
+  const el = $('#tgt'); el.style.transition = 'none'; el.style.opacity = 1; el.style.right = '12%'; el.src = FB_TGT; el.style.display = 'block'; $('#chest').style.display = 'none';
+  layoutTarget();
+  image('A silly, harmless, slightly grumpy cartoon creature: ' + c.sprite + ', with big googly eyes, side view, simple shapes, soft colours. No text.', '1024x1024', true).then(src => { el.src = src; }).catch(() => {});
+}
+$('#back').onclick = () => { ui.distance = Math.max(1, ui.distance - 1); layoutTarget(); };
+$('#near').onclick = () => { ui.distance = Math.min(5, ui.distance + 1); layoutTarget(); };
+function track(ev) {
+  if (typeof ev.sud === 'number' && ['TARGET', 'CHECKIN', 'ORIENT_DONE'].includes(ev.type)) { ui.mood = ev.sud; layoutTarget(); }
+  if (ev.type === 'SET_DONE' || (ev.type === 'CLOSURE_DONE' && S.state === 'done')) { ui.stars++; $('#stars').textContent = '⭐ ' + ui.stars; $('#stars').hidden = false; }   // stars reward showing up, never the numbers
+}
+function tuckAway() {      // closure: the creature shrinks into a chest beside the safe place
+  const t = $('#tgt'), c = $('#chest'); if (!ui.symbol || !ui.scene) return;
+  c.src = FB_CHEST; c.style.display = 'block'; $('#tag').style.display = 'none';
+  t.style.transition = RM() ? 'none' : 'all 1.6s ease'; t.style.right = '9%'; t.style.bottom = '9%'; t.style.height = '8%';
+  setTimeout(() => { t.style.opacity = 0; }, RM() ? 0 : 1700);
+}
+function confetti() {
+  if (RM()) return;
+  for (let i = 0; i < 18; i++) { const e = document.createElement('span'); e.className = 'cf'; e.textContent = ['⭐', '✨', '🎈', '💛'][i % 4]; e.style.left = (Math.random() * 94) + 'vw'; e.style.animationDelay = (Math.random() * 1.2) + 's'; document.body.appendChild(e); setTimeout(() => e.remove(), 5200); }
+}
+
+// ---------- bilateral stimulation ----------
+let AC = null; const bls = { raf: 0 };
+function startAudio() { if (!ui.sound) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); AC.resume(); } catch (e) { ui.sound = false; } }
+function beep(pan) {
+  if (!ui.sound || !AC) return;
+  try {
+    const o = AC.createOscillator(), g = AC.createGain(), now = AC.currentTime; o.type = 'sine'; o.frequency.value = 480;
+    g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(.16, now + .01); g.gain.exponentialRampToValueAtTime(.0001, now + .18); o.connect(g);
+    if (AC.createStereoPanner) { const p = AC.createStereoPanner(); p.pan.value = pan; g.connect(p); p.connect(AC.destination); } else g.connect(AC.destination);
+    o.start(now); o.stop(now + .2);
+  } catch (e) {}
+}
+function runBLS() {
+  stopBLS(); $('#stage').classList.add('run');
+  const t0 = performance.now(), period = 2000; let last = -1;
+  const tick = now => {
+    const t = now - t0;
+    if (t >= SETMS) { bls.raf = 0; stopBLS(); send({ type: 'SET_DONE' }); return; }
+    const half = Math.floor(2 * t / period), x = .5 - .5 * Math.cos(2 * Math.PI * t / period);
+    $('#ball').style.left = (8 + 84 * x) + '%';
+    if (half !== last) { last = half; beep(half % 2 === 0 ? -1 : 1); $('#dotL').style.opacity = half % 2 === 0 ? 1 : .25; $('#dotR').style.opacity = half % 2 === 0 ? .25 : 1; }
+    $('#barP').style.width = (100 * t / SETMS) + '%';
+    bls.raf = requestAnimationFrame(tick);
+  };
+  bls.raf = requestAnimationFrame(tick);
+}
+function stopBLS() { if (bls.raf) cancelAnimationFrame(bls.raf); bls.raf = 0; $('#stage').classList.remove('run'); $('#barP').style.width = '0'; }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { ui.hiddenAt = Date.now(); if (bls.raf) stopBLS(); }
+  else if (ui.hiddenAt) { const ms = Date.now() - ui.hiddenAt; ui.hiddenAt = 0; if (S.state === 'processing') send({ type: 'TAB_HIDDEN', ms }); }
+});
+
+// ---------- text that must pass the safety check before the flow continues ----------
+// o.amber: 'machine' = hand it to the state machine (grounding), otherwise ask for a simpler version. o.unavailable: 'stop' closes gently.
+async function safeText(prompt, o = {}) {
+  const ep = epoch;
+  for (;;) {
+    const text = await askText(prompt, o); prompt = '';
+    if (!text) return '';
+    const done = thinking(), lvl = await riskCheck(text); done();
+    if (ep !== epoch) return null;
+    if (lvl === 'unavailable') { if (o.unavailable === 'stop') { send({ type: 'STOP' }); return null; } say("I can't run my safety check right now. Please try again in a moment."); continue; }
+    if (lvl === 'red') { send({ type: 'TEXT_RISK', level: 'red' }); return null; }
+    if (lvl === 'amber') { if (o.amber === 'machine') { send({ type: 'TEXT_RISK', level: 'amber' }); return null; } say('That sounds like it might be a lot right now. Try a simpler version with no details, or tap Stop & ground at the top any time.'); continue; }
+    return text;
+  }
+}
+
+// ---------- the conversation ----------
+const QS = [
+  ['adult', 'Are you 18 or older?'],
+  ['suicidal', 'Are you having thoughts of ending your life or hurting yourself right now?'],
+  ['psychosis', "Right now, are you hearing or seeing things others don't, or feeling unsure what is real?"],
+  ['intoxicated', 'Are you under the influence of alcohol or drugs right now?'],
+  ['dissociativeDx', 'Have you been diagnosed with a dissociative disorder, or do you often lose chunks of time or feel unreal or detached?'],
+  ['unsafeNow', 'Are you in a situation right now where you are not physically safe?']
+];
+function show(name) {
+  switch (name) {
+    case 'screening': case 'screening_incomplete': return screenFlow();
+    case 'excluded': case 'not_ready': return exclusion(name);
+    case 'safe_place': return token ? placeFlow() : payFlow();
+    case 'ground': return groundFlow();
+    case 'target': return targetFlow(false);
+    case 'target_declined': say("That sounds like a lot for a first step. Let's choose something that feels smaller, so you stay comfortable."); return targetFlow(true);
+    case 'set': return S.sets > 0 ? noticeFlow() : promptSet();
+    case 'checkin': return checkinFlow();
+    case 'orient': return orientFlow();
+    case 'closure': return closureFlow();
+    case 'crisis': return crisisFlow();
+    case 'cooldown': return cooldownFlow();
+    case 'done': return doneFlow();
+  }
+}
+
+async function consentFlow() {
+  say(['Hi, and welcome. This is a guided cartoon adventure: you build a safe place, turn something that bothers you into a silly little creature, and get to know it from a distance while following a moving dot (bilateral stimulation, inspired by EMDR).', 'You choose how close it gets, and you can stop at any time.']);
+  say(['Before we begin, please know:',
+    '• This is not therapy, medical advice or emergency help, and it can\'t replace a trained professional. If you have a therapist, consider checking with them first.',
+    '• Hard memories can bring up strong feelings. I\'ll ask how you feel throughout, and we\'ll pause or stop if you need that.',
+    '• What you type is sent to a third-party AI service that creates the text and pictures. This service doesn\'t store it; our server keeps only a session counter. Please use nicknames and a few words, with no real names, places or identifying details. You never need to tell me what happened.']);
+  await chips([["I understand, let's begin", 'ok']]);
+  send({ type: 'CONSENT', accepted: true });
+}
+async function screenFlow() {
+  say("A few quick yes/no questions to check this is a good fit right now. Your answers aren't stored.");
+  const a = {};
+  for (const [k, q] of QS) { say(q); a[k] = await chips([['Yes', true], ['No', false]]); }
+  send({ type: 'SCREEN', answers: a });
+}
+function exclusion(kind) {
+  showScene(false);
+  say(kind === 'excluded'
+    ? ['Thank you for answering honestly. A self-guided exercise isn\'t the right support for you at this moment, and that\'s okay. A trained professional can help much more than I can. If you paid, a refund is on its way.']
+    : ["Let's stop here for today. Your answers suggest this isn't the right moment, and that's completely fine. Nothing is wrong with you. Try again another day, or talk with someone you trust. If you paid, a refund is on its way."]);
+  resBubble('If you need support, any time:'); syncBox();
+}
+async function payFlow() {
+  for (;;) {
+    say(['One guided session (about 30 minutes at most) is $2. Payments are handled by Stripe, and Stripe never sees anything you write here.']);
+    const opts = [['Pay $2 and begin', 'pay']]; if (location.hash === '#test' || /[?&]test\b/.test(location.search)) opts.push(['Test mode', 'test']);
+    const c = await chips(opts);
+    if (c === 'pay') {
+      try { sessionStorage.setItem('sm_state', JSON.stringify(S)); const j = await api('pay.php?a=checkout'); location.href = j.url; return; }
+      catch (e) { say('I could not start checkout. Please try again.'); continue; }
+    }
+    const key = await askText('Paste the test key (this skips payment only).', { secret: true, placeholder: 'test key' });
+    try { setToken((await api('pay.php?a=admin', { key })).token); return placeFlow(); } catch (e) { say('Test start refused.'); }
+  }
+}
+
+const PLACE_SYS = 'You write short calming guided-imagery text and image prompts for a safe-place exercise. Reply in the same language the person wrote in. Return JSON: {"title": string (max 5 words), "lines": [3 strings, each max 18 words, second person, present tense, sensory and gentle], "bg_prompt": string (the setting, light and colours only; no people), "figure_prompt": string (one friendly cartoon character or creature that embodies the calming figure, if one was mentioned, otherwise a gentle friendly creature; full body, side view, simple shapes)}. Never mention distress, memories or the past.';
+async function placeFlow() {
+  const ep = epoch;
+  say(["Let's start by building a safe place.", 'Describe a place where you feel calm or safe, real or imagined, and anyone or anything that helps you feel calm. For example: "a quiet beach at sunrise with my old dog".']);
+  const text = await safeText('', { max: 200, placeholder: 'Describe your safe place…', amber: 'machine' });
+  if (text === null || ep !== epoch) return;
+  const place = text || 'a quiet sunny place';
+  const done = thinking(); let lines = FALLBACK_LINES, bgSrc = FB_BG, figSrc = FB_FIG;
+  try {
+    const p = await story(PLACE_SYS, { place });
+    if (Array.isArray(p.lines) && p.lines.length) lines = p.lines.slice(0, 3).map(String);
+    const [b, f] = await Promise.allSettled([image((p.bg_prompt || place) + '. Wide panoramic composition, empty foreground.', '1536x1024'), image(p.figure_prompt || 'a gentle friendly creature', '1024x1024', true)]);
+    if (b.status === 'fulfilled') bgSrc = b.value; if (f.status === 'fulfilled') figSrc = f.value;
+  } catch (e) {}
+  done(); if (ep !== epoch) return;
+  $('#bg').src = bgSrc; $('#fig').src = figSrc; showScene(true); setCap(lines.join(' '));
+  say(['Here is your safe place.', 'Take three slow breaths here. Notice the colours, the light, the air.']);
+  const p = await rate("How present do you feel here, in the room you're in right now?", { hints: HINT_PRES });
+  if (ep === epoch) send({ type: 'STAB_DONE', presence: p, latencyMs: 0 });
+}
+async function groundFlow() {
+  if (S.state === 'closure') return closureGround();
+  const t0 = performance.now(); setCap('You are safe in your place. Take your time.');
+  say(["Let's pause and ground for a moment.", 'Feel your feet on the floor. Look around the room and name five things you can see. Let your breath out slowly, longer than your breath in.']);
+  const p = await rate("How present do you feel in the room you're in?", { hints: HINT_PRES });
+  send({ type: 'STAB_DONE', presence: p, latencyMs: Math.round(performance.now() - t0) });
+}
+
+// the assessment: a few quick questions about how the memory affects you (never what happened)
+const NEG = ["I'm not safe", "It's my fault", "I'm not good enough", "I'm powerless"], POS = ['I am safe now', 'It is over', 'I did the best I could', 'I can handle this', 'I am enough'];
+async function targetFlow(again) {
+  const ep = epoch; if (!ui.scene) fallbackScene();
+  say(again ? ['A few words, like a headline, is plenty.']
+    : ['Thank you. Now, something that has been weighing on you.', 'Pick something that bothers you a little to a moderate amount, not the hardest thing. You never need to tell me what happened. A few words, like a headline, is plenty.']);
+  const headline = await safeText('', { max: 200, placeholder: 'A few words about it…' }); if (headline === null || ep !== epoch) return;
+  const impact = await rate('How much does this affect your day-to-day life right now?', { hints: ['0 not at all', '10 a lot'] }); if (ep !== epoch) return;
+  const neg = await safeText('When you think of it, what does it make you believe about yourself?', { chips: NEG, max: 80, placeholder: 'or type your own…' }); if (neg === null || ep !== epoch) return;
+  say('Where do you feel it in your body?');
+  const body = await chips(['Chest', 'Stomach', 'Throat', 'Head', 'Shoulders', 'Not sure']); if (ep !== epoch) return;
+  const sud = await rate('Thinking of it now, how distressing is it?', { hints: ['0 none', '10 worst'] }); if (ep !== epoch) return;
+  const pos = await safeText('What would you like to believe about yourself instead?', { chips: POS, max: 80, placeholder: 'or type your own…' }); if (pos === null || ep !== epoch) return;
+  const voc = await rate('How true does that feel right now? (1 not at all, 7 completely)', { min: 1, max: 7 }); if (ep !== epoch) return;
+  Object.assign(ui, { headline, impact, neg, body, belief: pos || 'I am safe now', voc0: voc, voc1: null, mood: sud });
+  if (sud <= S.cfg.maxTargetSud) ui.creatureP = makeCreature(headline, body);
+  send({ type: 'TARGET', sud });
+}
+
+async function promptSet() {
+  const ep = epoch; await ui.creatureP; if (ep !== epoch) return;
+  $('#ctl').hidden = false;
+  if (!ui.introduced) { ui.introduced = true; say(['Let me turn that into a cartoon.', 'Meet ' + ui.cname + ', a ' + ui.symbol + '. It is far away, and you decide how close it gets. Use the buttons under the picture any time.']); }
+  say('Set ' + (S.sets + 1) + ". When you're ready, follow the dot with your eyes (or just listen). Let whatever comes, come. It lasts about half a minute.");
+  const c = await chips(ui.soundAsked ? [['Start', 'go']] : [['Start', 'go'], ['Start with sound', 'snd']]); if (ep !== epoch) return;
+  if (c === 'snd') ui.sound = true; ui.soundAsked = true;
+  startAudio(); setCap('Follow the dot with your eyes. Let whatever comes, come.'); runBLS();
+}
+async function checkinFlow() {
+  const [sud, presence, ms] = await ratePair('Quick check-in. How distressing does it feel right now?', HINT_SUD, "How present do you feel in the room you're in?", HINT_PRES);
+  send({ type: 'CHECKIN', sud, presence, latencyMs: ms });
+}
+const NARR_SYS = 'You are the narrator of a gentle cartoon story used in a guided bilateral-stimulation exercise. Reply in the same language as the input. Return JSON: {"title": string (max 4 words, playful), "line": string (ONE or TWO short sentences, max 35 words)}. Characters: the reader ("you") and a silly, harmless cartoon creature (given name and form) who stands at a chosen distance. Tone: warm, light, a little funny. You are always safe. The creature is comic and never menacing. Never describe any event, harm or backstory, and never frame anything as a fight, battle or confrontation. Show the story as getting to know the creature from a safe distance, where it may soften, shrink, wander off or change colour at its own pace. Reflect what the person noticed only as weather, light, distance or movement in the story. Never interpret, diagnose, ask for details or give advice.';
+async function noticeFlow() {
+  const ep = epoch;
+  const text = await safeText('What do you notice now, in your body, your feelings or your thoughts? A word or two is plenty.', { chips: [['Nothing new', '']], max: 120, placeholder: 'or type a word or two…', amber: 'machine', unavailable: 'stop' });
+  if (text === null || ep !== epoch) return;
+  const done = thinking(); let line = FALLBACK_LINES[S.sets % 3], title = FALLBACK_TITLES[S.sets % 3];
+  try {
+    const r = await story(NARR_SYS, { creature: ui.cname, form: ui.symbol, distance: ui.distance, noticed: text, chapter: S.sets });
+    if (r && typeof r.line === 'string' && r.line) { line = r.line; if (typeof r.title === 'string' && r.title) title = r.title; }
+  } catch (e) {}
+  done(); if (ep !== epoch) return;
+  ui.chapters.push({ n: S.sets, title, line }); setCap('Chapter ' + S.sets + ' · ' + title + ': ' + line);
+  say(['Chapter ' + S.sets + ': ' + title, line]);
+  return promptSet();
+}
+async function orientFlow() {
+  ui.distance = 1; layoutTarget(); $('#ctl').hidden = true; setCap('You are safe in your place. We are only grounding now.');
+  say(['We paused the exercise, and that is exactly what we should do.', 'Feel your feet on the floor. Look around the room and name five things you can see. Let your breath out slowly. Then tell me how you feel.']);
+  const pr = ratePair('How distressing does it feel right now?', HINT_SUD, "How present do you feel in the room you're in?", HINT_PRES);
+  chipRow([['I need a moment']], () => { send({ type: 'ORIENT_PING' }); say('Take your time. Tap again if you need more.'); });
+  const [sud, presence] = await pr;
+  send({ type: 'ORIENT_DONE', sud, presence });
+}
+
+async function closureFlow() {
+  const ep = epoch; stopBLS(); $('#ctl').hidden = true; setCap(''); tuckAway();
+  const res = S.outcome === 'resolved';
+  say([res ? 'That feels lighter. Notice what has changed. You did something difficult.' : 'You did something hard, and nothing needs to be finished today.',
+    'Picture a sturdy container in your safe place: a chest, a jar, a cloud. Place whatever is left inside, close it, and set it near your calming figure. You can come back to it later, on your own terms.']);
+  await chips([['Next', 'n']]); if (ep !== epoch) return;
+  const bodyNote = ui.body && ui.body !== 'Not sure' ? ', especially your ' + ui.body.toLowerCase() : '';
+  say([...(res ? ['Hold this thought for a few slow breaths: "' + ui.belief + '".'] : []), 'Scan slowly from your head to your toes' + bodyNote + '. If you notice tension, let your breath out slowly toward it. Feel the chair or floor holding you.']);
+  await chips([['Next', 'n']]); if (ep !== epoch) return;
+  if (ui.voc0) { ui.voc1 = await rate('When you think of it now, how true does "' + ui.belief + '" feel? (1 not at all, 7 completely)', { min: 1, max: 7 }); if (ep !== epoch) return; }
+  const [sud, presence] = await ratePair('One last check-in. Look around the room and notice where you are. How distressing does the memory feel now?', HINT_SUD, "How present do you feel in the room you're in?", HINT_PRES);
+  send({ type: 'CLOSURE_DONE', sud, presence });
+}
+async function closureGround() {
+  say(["Let's take another moment.", 'Feel your feet on the floor, name five things you can see, and let your breath out slowly.']);
+  const [sud, presence] = await ratePair('How distressing does it feel now?', HINT_SUD, "How present do you feel in the room you're in?", HINT_PRES);
+  send({ type: 'CLOSURE_DONE', sud, presence });
+}
+
+const OUT = { resolved: 'Your distress came down to a calm level. That is a real result.', stopped: 'You chose to stop, and that was a good decision. You can come back another time.', cap_reached: "We reached the end of today's time. It's fine that it isn't finished. Rest is part of the process.", target_declined: "We stopped before starting, so you stayed comfortable. A smaller memory, or a professional's support, may be a better fit.", not_recovered: 'It was a lot today, so we closed gently. Be kind to yourself, and consider talking this through with someone you trust.' };
+function doneFlow() {
+  $('#ctl').hidden = true; const st = S.sudSeries;
+  const lines = [OUT[S.outcome] || 'Thank you for taking care of yourself today.'];
+  if (S.targetSud != null && st.length > 1) lines.push('Distress: ' + S.targetSud + ' → ' + st[st.length - 1] + ' (0–10).');
+  if (ui.voc0 && ui.voc1) lines.push('How true "' + ui.belief + '" felt: ' + ui.voc0 + ' → ' + ui.voc1 + ' (1–7).');
+  if (ui.stars) lines.push('You collected ' + ui.stars + ' ⭐ for showing up.');
+  say(lines);
+  if (ui.chapters.length) { const b = say('Your story (shown here only, never saved):'); ui.chapters.forEach(c => { const d = document.createElement('div'); d.className = 'chap'; const t = document.createElement('b'); t.textContent = 'Chapter ' + c.n + ': ' + c.title; const q = document.createElement('div'); q.textContent = c.line; d.appendChild(t); d.appendChild(q); b.appendChild(d); }); }
+  say('If distress keeps coming back, a trauma-informed therapist can help. This tool is not a substitute.');
+  chipRow([['Download my ratings', 'dl'], ['Erase this session', 'er']], (label, val) => val === 'dl' ? download() : erase());
+  confetti(); syncBox();
+}
+function safetyNet() {
+  ui.net = true;
+  resBubble('If you feel unsettled in the next hours or days, that can happen after this kind of work. Use your safe place and grounding, and please reach out to someone you trust or a professional. Support is available any time:');
+}
+function download() {
+  const sm = Session.summary(S);
+  const txt = 'Calm Scenes: session ratings (nothing you wrote is included)\nDate: ' + new Date().toISOString().slice(0, 10) + '\nOutcome: ' + sm.outcome + '\nSets: ' + sm.sets + '\nImpact on daily life (0-10): ' + (ui.impact == null ? '-' : ui.impact) + '\nDistress (0-10) over time: ' + sm.sudSeries.join(', ') + '\nPresence (0-10) over time: ' + sm.presenceSeries.join(', ') + '\nBelief felt true (1-7): ' + (ui.voc0 || '-') + ' -> ' + (ui.voc1 || '-') + '\nPauses for grounding: ' + sm.ambers + '\n';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = 'session-ratings.txt'; a.click();
+}
+function erase() { sessionStorage.removeItem('sm_tok'); sessionStorage.removeItem('sm_state'); location.href = location.pathname; }   // the cooldown, if any, is deliberately kept
+function crisisFlow() {
+  showScene(false);
+  say(["I'm pausing everything here.", "How you're feeling matters more than any exercise. Please reach out to someone right now. If you might be in immediate danger, call your local emergency number."]);
+  resBubble('Support is available any time:');
+  say(['While you reach out: breathe out slowly, feel your feet on the floor, and look around the room and name three things you can see.', 'To keep things safe, new sessions are paused for 24 hours after a session ends this way.']); syncBox();
+}
+function cooldownFlow() {
+  const h = Math.max(1, Math.ceil((S.cooldownUntil - Date.now()) / 3600000));
+  say(['Sessions are paused for now.', 'For safety, a new session can\'t start for another ' + h + ' hour' + (h === 1 ? '' : 's') + '. If you\'re struggling, support is available any time:']);
+  resBubble(''); syncBox();
+}
+
+// ---------- header buttons ----------
+$('#pause').onclick = () => send({ type: 'STOP' });
+const openHelp = () => { stopBLS(); $('#helpDlg').showModal(); };
+$('#help').onclick = openHelp; $('#help2').onclick = e => { e.preventDefault(); openHelp(); };
+$('#helpClose').onclick = () => $('#helpDlg').close();
+
+// ---------- start ----------
+(async function init() {
+  document.body.classList.toggle('rm', matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const cs = new URLSearchParams(location.search).get('cs');
+  if (cs) {
+    try { const saved = sessionStorage.getItem('sm_state'); if (saved) S = JSON.parse(saved); } catch (e) {}
+    try {
+      setToken((await api('pay.php?a=claim', { cs })).token); history.replaceState(null, '', location.pathname);
+      if (S.state === 'stabilize') { say('Payment received. Thank you.'); return placeFlow(); }
+    } catch (e) { history.replaceState(null, '', location.pathname); if (S.state === 'stabilize') { say("I couldn't confirm your payment yet."); return payFlow(); } }
+  }
+  if (S.state === 'cooldown') return cooldownFlow();
+  consentFlow();
+})();
+})();
+</script>
+</body>
+</html>
